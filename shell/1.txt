@@ -1,0 +1,16 @@
+#!/bin/bash
+#byz	shell	virsh	test
+#vim /etc/sysconfig/network-scripts/ifcfg-eth
+
+#IPADDR=192.168.
+#NETMASK=255.255.255.0
+read -p "IP ADDRESS:" IP_ADDR
+LAST_IP_ADDR=`echo $IP_ADDR | awk -F"." '{print $4}'`
+sed -i "5a IPADDR=$IP_ADDR" /etc/sysconfig/network-scripts/ifcfg-eth0
+sed -i "6a NETMASK=255.255.255.0" /etc/sysconfig/network-scripts/ifcfg-eth0
+
+hostnamectl set-hostname server$LAST_IP_ADDR
+systemctl restart network
+
+
+
