@@ -1,0 +1,140 @@
+#byz!	RDBMS2	day4
+MHA集群
+	高可用
+	快速故障切换
+	故障切换保证数据一致性
+	使用虚拟(virtual)服务地址
+
+#################################################
+
+安装依赖
+
+管理主机免密登录Mysql服务器
+Mysql服务器之间免密
+
+
+配置一主多从同步结构
+主
+	开启日志
+	开启server_id
+	重启服务
+	授权用户
+从
+	开启 server_id
+	重启服务
+	指向主服务器
+	开启Mysql从服务	
+
+
+管理节点
+	安装MHA软件
+
+	相关命令 # ls /root/perl5/bin/masterha_*
+	masterha_check_ssh 检查MHA的SSH配置状况
+	masterha_check_repl 检查MySQL复制状况
+	masterha_manager 启动MHA
+	masterha_check_status 检测MHA运行状态
+	masterha_stop 停止MHA
+
+
+	模板文件
+	- mha4mysql-manager-0.56/samples/conf/app1.cnf
+	[server default] #管理服务默认配置
+	  manager_workdir=/etc/mha #工作目录
+	  manager_log=/etc/mha/manager.log #日志文件
+	  master_ip_failover_script=/etc/mha/master_ip_failover #故障切换脚本
+
+	  ssh_user=root #访问ssh服务用户
+	  ssh_port=22 #ssh服务端口
+
+	  repl_user=repluser #主服务器数据同步授权用户
+	  repl_password=123qqq...A #密码
+
+	  user=root #监控用户
+	  password=123qqq...A #密码
+
+	[server1] #指定第1台数据库服务器
+	  hostname=192.168.4.51 #IP地址
+	  port=3306		#端口
+	  candidate_master=1	#竞选主服务器
+
+        [server2]
+          hostname=192.168.4.52
+          port=3306
+          candidate_master=1
+
+        [server3]
+          hostname=192.168.4.53
+          port=3306
+          candidate_master=1
+
+        [server4]
+          hostname=192.168.4.54
+          port=3306
+          no_master=1		#不竞选主服务器
+
+	
+创建故障切换脚本
+	vim /etc/mha/master_ip_failover
+	  my $vip = "192.168.4.100/24" ; #定义VIP地址
+	  my $key = "1" ; #定义地址编号
+	  my $ssh_start_vip = "/sbin/ifconfig eth0:$key $vip" ; #绑定VIP地址
+	  my $ssh_stop_vip = "/sbin/ifconfig eth0:$key down" ; #释放VIP地址
+
+给予脚本执行权限
+
+在主库 部署VIP地址
+ifconfig eth0:1 192.168.4.100
+
+
+在所有数据库服务器上安装mha_node 包
+ yum -y install mha5mysql-node-0.56-0.el6.noarch.rpm
+在所有数据库服务器上做授权用户
+
+
+配置主服务器,修改数据库服务运行参数
+vim /etc/my.cnf
+  [mysql]
+	plugin-load = "rpl_semi_sync_master=semisync_master.so;rpl_semi_sync_slave=semisync_slave.so" #加载模块
+
+	rpl_semi_sync_master_enabled=1 #启动master模块
+	rpl_semi_sync_slave_enabled=1 #启动slave模块
+
+	relay_log_purge=0 #禁止自动删除中继日志文件
+
+重启 mysqld 服务
+
+备用服务器
+[mysql]
+	开启日志
+	开启server_id
+        plugin-load = "rpl_semi_sync_master=semisync_master.so;rpl_semi_sync_slave=semisync_slave.so" #加载模块
+
+        rpl_semi_sync_master_enabled=1 #启动master模块
+        rpl_semi_sync_slave_enabled=1 #启动slave>模块
+
+        relay_log_purge=0 #禁止自动删除中继日志文
+件
+
+
+
+启动管理服务
+master_manager --conf=/etc/mha/app1.cnf \
+--remove_dead_master_conf --ignore_last_failover
+
+主服务器添加访问数据链接用户
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

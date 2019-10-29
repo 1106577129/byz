@@ -1,0 +1,95 @@
+#byz	nosql	day2
+使用redis cluster(集群) 主机
+部署环境
+创建脚本
+
+在 redis 服务器上部署环境 启动集群功能
+
+在 主机 上 创建集群
+
+最后 测试
+
+使用的脚本 redisCluster* #redis集群脚本
+#################################################
+
+#规划拓扑结构
+# 管理主机上
+yum -y install rubygems
+得到 redis-3.2.1.gem 文件
+gem install redis-3.2.1.gem
+yum -y install ruby
+mkdir /root/bin #将脚本文件能用tab使用
+
+找到 redis-4.0.8/src/redis-trib.rb 文件 
+拷贝到 /root/bin
+
+
+# redis 服务器 配置环境
+安装 redis 更改 端口 IP连接
+开启集群功能 
+vim /etc/redis/redis.conf
+815	cluster-enabled yes
+823	cluster-config-file nodes-6379.conf
+829	cluster-node-timeout 5000
+
+重启服务
+/etc/init.d/redis_6379 restart
+
+#创建集群
+#redis-trib.rb create --replicas 1 [redis服务器IP地址:端口] [redis服务器IP地址:端口] ...
+
+#客户端访问
+redis-cli -c -h IP地址 -p 端口号
+
+
+#添加master服务器
+#重新分片
+# - 移出hash槽个数
+# - 接收hash槽主机ID
+# - 移出hash槽主机ID
+
+# 管理主机
+#添加master服务器
+redis-trib.rb add-node 192.168.4.58:6358 192.168.4.51:6351
+redis-trib.rb reshard 192.168.4.51:6351 #重新分片
+				4096
+
+asdfxcv25347c1v23c7v6w1er1cvzxv #接收主机的ID号
+
+	all
+
+#添加slave服务器
+redis-trib.rb add-node --slave 192.168.4.59:6359 192.168.4.51:6351
+
+
+#移除slave服务器
+redis-trib.rb del-node 192.168.4.51:6351 asdd8f8565xzcv789zxvc56z87xzx9v
+
+#移除master服务器
+#-重新分片(释放占用的slots)
+## - 移出hash槽个数
+## - 接收hash槽主机ID
+## - 移出hash槽主机ID
+
+## 管理主机
+redis-trib.rb add-node 192.168.4.58:6358 192.168.4.51:6351
+redis-trib.rb reshard 192.168.4.51:6351 #重新分片
+                                4096
+
+                                asdfxcv25347c1v23c7v6w1er1cvzxv #接收主机的ID号
+
+                                xzpowqnnkzcvoi32248qwzxcvdf8s71 #移除主机ID号
+				done
+
+#-移除主机
+redis-trib.rb add-node --slave  192.168.4.51:6351 zpowqnnkzcvoi32248qwzxcvdf8s71
+
+
+
+
+
+
+
+
+
+

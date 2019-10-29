@@ -1,0 +1,7 @@
+#!/bin/bash
+#byz!	test
+
+xxx=`echo 123 >&2`
+if [ -z 0 ];then
+echo $xxx
+fi

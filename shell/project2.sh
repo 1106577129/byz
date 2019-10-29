@@ -18,6 +18,8 @@ ExecStop=/bin/kill -s QUIT ${MAINPID}
 [Install]
 WantedBy=multi-user.target' > /usr/lib/systemd/system/nginx.service
 
+
+
 sed -i "45s/index  index.html index.htm;/index  index.php index.html index.htm;/" /usr/local/nginx/conf/nginx.conf
 sed -ri "65,71s/#//" /usr/local/nginx/conf/nginx.conf
 sed -ri "69s/^/#/" /usr/local/nginx/conf/nginx.conf
