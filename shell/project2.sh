@@ -25,15 +25,15 @@ sed -ri "65,71s/#//" /usr/local/nginx/conf/nginx.conf
 sed -ri "69s/^/#/" /usr/local/nginx/conf/nginx.conf
 sed -ri "70s/fastcgi_params;/fastcgi.conf;/" /usr/local/nginx/conf/nginx.conf
 
-systemctl restart mariadb
-mysql -e "create database wordpress character set utf8mb4";
-mysql -e "grant all on wordpress.* to wordpress@localhost identified by 'wordpress'";
-mysql -e "grant all on wordpress.* to wordpress@192.168.4.51 identified by 'wordpress'";
-mysql -e "flush privileges";
+#systemctl restart mariadb
+#mysql -e "create database wordpress character set utf8mb4";
+#mysql -e "grant all on wordpress.* to wordpress@localhost identified by 'wordpress'";
+#mysql -e "grant all on wordpress.* to wordpress@192.168.4.51 identified by 'wordpress'";
+#mysql -e "flush privileges";
 systemctl restart nginx
 systemctl restart php-fpm
 systemctl enable nginx
-systemctl enable mariadb
+#systemctl enable mariadb
 systemctl enable php-fpm
 
 

@@ -1,16 +1,17 @@
 #!/bin/bash
 #byz	shell	virsh	test
 #vim /etc/sysconfig/network-scripts/ifcfg-eth
-
 #IPADDR=192.168.
 #NETMASK=255.255.255.0
 read -p "IP ADDRESS:" IP_ADDR
+read -p "DEVICE:" DEV_1
 LAST_IP_ADDR=`echo $IP_ADDR | awk -F"." '{print $4}'`
-sed -i "5a IPADDR=$IP_ADDR" /etc/sysconfig/network-scripts/ifcfg-eth0
-sed -i "6a NETMASK=255.255.255.0" /etc/sysconfig/network-scripts/ifcfg-eth0
+sed -i "5a IPADDR=$IP_ADDR" /etc/sysconfig/network-scripts/ifcfg-eth$DEV_1
+sed -i "6a NETMASK=255.255.255.0" /etc/sysconfig/network-scripts/ifcfg-eth$DEV_1
+sed -i "s/dhcp/none/" /etc/sysconfig/network-scripts/ifcfg-eth$DEV_1
 
 hostnamectl set-hostname server$LAST_IP_ADDR
 systemctl restart network
 
-
+ifconfig eth$DEV_1 | head -2 | awk '/ine/{print $2}'
 

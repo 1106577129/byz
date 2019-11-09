@@ -3,7 +3,7 @@
 read -p "IP: " IPx
 for i in $IPx
 do
-  scp -r ~/qq/project2.sh root@192.168.4.$i:/root
+  scp -r ~/byz/shell/project2.sh root@192.168.4.$i:/root
 done
 
 

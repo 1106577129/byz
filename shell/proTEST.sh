@@ -4,7 +4,7 @@ read -p "IP: " IPx
 for i in $IPx
 do
   scp -r /linux-soft/02/lnmp_soft.tar.gz root@192.168.4.$i:/root
-  scp -r ~/qq/project1.sh root@192.168.4.$i:/root
+  scp -r ~/byz/shell/project1.sh root@192.168.4.$i:/root
 done
 
 
